@@ -78,7 +78,7 @@ RUN /install ${VERSION} && rm /install
 
 # CMD ["/usr/local/bin/gobackup", "run"]
 
-FROM postgres:17 as prod
+FROM postgres:17-alpine as prod
 
 COPY --from=builder /usr/local/bin/gobackup /usr/local/bin/gobackup
 
