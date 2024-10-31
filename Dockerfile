@@ -12,7 +12,8 @@ RUN apk add --no-cache \
   pkgconfig \
   wget \
   bison \
-  flex
+  flex \
+  perl
 
 WORKDIR /tmp
 RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.gz && \
