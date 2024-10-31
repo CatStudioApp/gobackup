@@ -4,11 +4,11 @@ RUN apk add \
   curl \
   ca-certificates \
   openssl \
-  mariadb-connector-c \
-  mysql-client \
-  mariadb-backup \
-  redis \
-  mongodb-tools \
+  # mariadb-connector-c \
+  # mysql-client \
+  # mariadb-backup \
+  # redis \
+  # mongodb-tools \
   sqlite \
   # replace busybox utils
   tar \
@@ -76,12 +76,5 @@ RUN case "$(uname -m)" in \
 ADD install /install
 RUN /install ${VERSION} && rm /install
 
-# CMD ["/usr/local/bin/gobackup", "run"]
-
-FROM postgres:17 as prod
-
-COPY --from=builder /usr/local/bin/gobackup /usr/local/bin/gobackup
-
-RUN ls -l /usr/local/bin/gobackup
-
 CMD ["/usr/local/bin/gobackup", "run"]
+
