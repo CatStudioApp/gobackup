@@ -1,10 +1,9 @@
-FROM alpine:latest
+FROM alpine:latest as builder
 ARG VERSION=latest
 RUN apk add \
   curl \
   ca-certificates \
   openssl \
-  postgresql-client \
   mariadb-connector-c \
   mysql-client \
   mariadb-backup \
@@ -76,5 +75,11 @@ RUN case "$(uname -m)" in \
 
 ADD install /install
 RUN /install ${VERSION} && rm /install
+
+# CMD ["/usr/local/bin/gobackup", "run"]
+
+FROM postgres:17 as prod
+
+COPY --from=builder /usr/local/bin/gobackup /usr/local/bin/gobackup
 
 CMD ["/usr/local/bin/gobackup", "run"]
