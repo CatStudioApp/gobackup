@@ -51,7 +51,6 @@ RUN apk add --no-cache \
 # Copy PostgreSQL binaries from pg_builder
 COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_dump /usr/local/bin/
 COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_dumpall /usr/local/bin/
-COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_restore /usr/local/bin/
 COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/psql/psql /usr/local/bin/
 
 # Rest of your existing setup
