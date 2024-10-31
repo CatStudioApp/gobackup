@@ -80,4 +80,6 @@ RUN apk add --no-cache openssl
 COPY --from=builder /usr/local/bin/gobackup /usr/local/bin/gobackup
 RUN ls -l /usr/local/bin/gobackup
 
+RUN mkdir -p /root/.gobackup/
+
 CMD ["/usr/local/bin/gobackup", "run"]
