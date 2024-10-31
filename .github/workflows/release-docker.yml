@@ -2,7 +2,7 @@ name: Release Docker Latest
 on:
   push:
     branches:
-      - "release-docker"
+      - main
 
 jobs:
   docker:
