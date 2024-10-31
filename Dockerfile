@@ -1,27 +1,3 @@
-# PostgreSQL builder stage
-FROM alpine:latest as pg_builder
-ARG PG_VERSION=17.0
-RUN apk add --no-cache \
-  gcc \
-  g++ \
-  make \
-  readline-dev \
-  zlib-dev \
-  icu-dev \
-  icu-libs \
-  pkgconfig \
-  wget \
-  bison \
-  flex \
-  perl
-
-WORKDIR /tmp
-RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.gz && \
-  tar xf postgresql-${PG_VERSION}.tar.gz && \
-  cd postgresql-${PG_VERSION} && \
-  ./configure --without-server --without-readline --without-icu && \
-  make -C src/bin/pg_dump && \
-  make -C src/bin/psql
 
 # Main builder stage
 FROM alpine:latest as builder
@@ -95,5 +71,13 @@ RUN case "$(uname -m)" in \
 ADD install /install
 RUN /install ${VERSION} && rm /install
 
+RUN ls -l /usr/local/bin/gobackup
 CMD ["/usr/local/bin/gobackup", "run"]
 
+
+FROM postgres:17-alpine as prod
+
+COPY --from=builder /usr/local/bin/gobackup /usr/local/bin/gobackup
+RUN ls -l /usr/local/bin/gobackup
+
+CMD ["/usr/local/bin/gobackup", "run"]
