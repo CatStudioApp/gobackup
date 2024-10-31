@@ -1,37 +1,55 @@
+# PostgreSQL builder stage
+FROM alpine:latest as pg_builder
+ARG PG_VERSION=17.0
+RUN apk add --no-cache \
+  gcc \
+  g++ \
+  make \
+  readline-dev \
+  zlib-dev \
+  wget
+
+WORKDIR /tmp
+RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.gz && \
+  tar xf postgresql-${PG_VERSION}.tar.gz && \
+  cd postgresql-${PG_VERSION} && \
+  ./configure --without-server --without-readline && \
+  make -C src/bin/pg_dump && \
+  make -C src/bin/psql && \
+  make -C src/bin/pg_restore
+
+# Main builder stage
 FROM alpine:latest as builder
 ARG VERSION=latest
-RUN apk add \
+RUN apk add --no-cache \
   curl \
   ca-certificates \
   openssl \
-  # mariadb-connector-c \
-  # mysql-client \
-  # mariadb-backup \
-  # redis \
-  # mongodb-tools \
   sqlite \
-  # replace busybox utils
   tar \
   gzip \
   pigz \
   bzip2 \
   coreutils \
-  # there is no pbzip2 yet
   lzip \
   xz-dev \
   lzop \
   xz \
-  # pixz is in edge atm
   zstd \
-  # microsoft sql dependencies \
   libstdc++ \
   gcompat \
   icu \
-  # support change timezone
   tzdata \
   && \
   rm -rf /var/cache/apk/*
 
+# Copy PostgreSQL binaries from pg_builder
+COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_dump /usr/local/bin/
+COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_dumpall /usr/local/bin/
+COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/psql/psql /usr/local/bin/
+COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_restore/pg_restore /usr/local/bin/
+
+# Rest of your existing setup
 WORKDIR /tmp
 RUN wget https://aka.ms/sqlpackage-linux && \
   unzip sqlpackage-linux -d /opt/sqlpackage && \
@@ -70,8 +88,6 @@ RUN case "$(uname -m)" in \
   rm -rf "etcd-${ETCD_VER}-linux-${arch}/etcdctl" \
   "etcd-${ETCD_VER}-linux-${arch}.tar.gz" && \
   etcdctl version
-
-
 
 ADD install /install
 RUN /install ${VERSION} && rm /install
