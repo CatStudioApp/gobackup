@@ -29,8 +29,8 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            https://github.com/CatStudioApp/gobackup:latest
-            https://github.com/CatStudioApp/gobackup:${{ env.TAG }}
+            ghcr.io/CatStudioApp/gobackup:latest
+            ghcr.io/CatStudioApp/gobackup:${{ env.TAG }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
