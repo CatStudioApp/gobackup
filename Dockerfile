@@ -10,7 +10,9 @@ RUN apk add --no-cache \
   icu-dev \
   icu-libs \
   pkgconfig \
-  wget
+  wget \
+  bison \
+  flex
 
 WORKDIR /tmp
 RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.gz && \
