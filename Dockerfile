@@ -10,6 +10,7 @@ RUN apk add --no-cache \
   wget
 
 WORKDIR /tmp
+RUN wget https://ftp.postgresql.org/pub/source/v17.0/postgresql-17.0.tar.gz
 RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VERSION}.tar.gz && \
   tar xf postgresql-${PG_VERSION}.tar.gz && \
   cd postgresql-${PG_VERSION} && \
