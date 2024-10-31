@@ -21,8 +21,7 @@ RUN wget https://ftp.postgresql.org/pub/source/v${PG_VERSION}/postgresql-${PG_VE
   cd postgresql-${PG_VERSION} && \
   ./configure --without-server --without-readline --without-icu && \
   make -C src/bin/pg_dump && \
-  make -C src/bin/psql && \
-  make -C src/bin/pg_restore
+  make -C src/bin/psql
 
 # Main builder stage
 FROM alpine:latest as builder
@@ -52,8 +51,8 @@ RUN apk add --no-cache \
 # Copy PostgreSQL binaries from pg_builder
 COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_dump /usr/local/bin/
 COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_dumpall /usr/local/bin/
+COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_dump/pg_restore /usr/local/bin/
 COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/psql/psql /usr/local/bin/
-COPY --from=pg_builder /tmp/postgresql-${PG_VERSION}/src/bin/pg_restore/pg_restore /usr/local/bin/
 
 # Rest of your existing setup
 WORKDIR /tmp
